@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>モグラ・パニック</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container"></div>
+
+    <!-- Phaser 3 ライブラリ -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+
+    <!-- ゲーム設定 -->
+    <script src="js/config.js"></script>
+
+    <!-- マネージャークラス -->
+    <script src="js/StorageManager.js"></script>
+    <script src="js/SoundManager.js"></script>
+
+    <!-- シーン -->
+    <script src="js/scenes/StartScene.js"></script>
+    <script src="js/scenes/MainScene.js"></script>
+    <script src="js/scenes/ResultScene.js"></script>
+
+    <!-- ゲーム初期化 -->
+    <script src="game.js"></script>
+</body>
+</html>
