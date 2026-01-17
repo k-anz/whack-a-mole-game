@@ -226,7 +226,7 @@ class MainScene extends Phaser.Scene {
 
         // ターゲット作成（円）
         const radius = 50;
-        const color = isMole ? 0xFF8C00 : 0x000000; // オレンジ or 黒
+        const color = isMole ? 0x8B4513 : 0x000000; // 茶色 or 黒
 
         const target = this.add.circle(hole.x, hole.y, radius, color);
         target.setStrokeStyle(4, 0x000000);
@@ -253,13 +253,55 @@ class MainScene extends Phaser.Scene {
                 repeat: -1
             });
         } else {
-            // モグラの目と鼻を追加
-            const leftEye = this.add.circle(hole.x - 15, hole.y - 10, 8, 0x000000);
-            const rightEye = this.add.circle(hole.x + 15, hole.y - 10, 8, 0x000000);
-            const nose = this.add.circle(hole.x, hole.y + 5, 10, 0xFF0000);
+            // === 可愛いモグラのデザイン ===
 
-            target.setData('eyes', [leftEye, rightEye]);
+            // 耳（顔の後ろに配置するため先に作成）
+            const leftEar = this.add.circle(hole.x - 40, hole.y - 35, 18, 0x8B4513);
+            leftEar.setStrokeStyle(2, 0x5D3A1A);
+            const leftEarInner = this.add.circle(hole.x - 40, hole.y - 35, 10, 0xDEB887);
+            const rightEar = this.add.circle(hole.x + 40, hole.y - 35, 18, 0x8B4513);
+            rightEar.setStrokeStyle(2, 0x5D3A1A);
+            const rightEarInner = this.add.circle(hole.x + 40, hole.y - 35, 10, 0xDEB887);
+
+            // 目（白目 + 黒目 + ハイライト）
+            const leftEyeWhite = this.add.circle(hole.x - 18, hole.y - 12, 12, 0xFFFFFF);
+            leftEyeWhite.setStrokeStyle(2, 0x000000);
+            const leftEyeBlack = this.add.circle(hole.x - 16, hole.y - 10, 6, 0x000000);
+            const leftEyeHighlight = this.add.circle(hole.x - 19, hole.y - 14, 3, 0xFFFFFF);
+
+            const rightEyeWhite = this.add.circle(hole.x + 18, hole.y - 12, 12, 0xFFFFFF);
+            rightEyeWhite.setStrokeStyle(2, 0x000000);
+            const rightEyeBlack = this.add.circle(hole.x + 20, hole.y - 10, 6, 0x000000);
+            const rightEyeHighlight = this.add.circle(hole.x + 17, hole.y - 14, 3, 0xFFFFFF);
+
+            // ほっぺ（ピンク）
+            const leftCheek = this.add.ellipse(hole.x - 35, hole.y + 5, 16, 10, 0xFFB6C1);
+            leftCheek.setAlpha(0.7);
+            const rightCheek = this.add.ellipse(hole.x + 35, hole.y + 5, 16, 10, 0xFFB6C1);
+            rightCheek.setAlpha(0.7);
+
+            // 鼻（ピンクの楕円）
+            const nose = this.add.ellipse(hole.x, hole.y + 8, 14, 10, 0xFF69B4);
+            nose.setStrokeStyle(2, 0x000000);
+
+            // 口（にっこり曲線）
+            const mouth = this.add.arc(hole.x, hole.y + 18, 12, 0, 180, false);
+            mouth.setStrokeStyle(3, 0x000000);
+            mouth.setClosePath(false);
+
+            // 前足
+            const leftPaw = this.add.ellipse(hole.x - 30, hole.y + 45, 20, 12, 0x8B4513);
+            leftPaw.setStrokeStyle(2, 0x5D3A1A);
+            const rightPaw = this.add.ellipse(hole.x + 30, hole.y + 45, 20, 12, 0x8B4513);
+            rightPaw.setStrokeStyle(2, 0x5D3A1A);
+
+            // データに保存
+            target.setData('ears', [leftEar, leftEarInner, rightEar, rightEarInner]);
+            target.setData('eyes', [leftEyeWhite, leftEyeBlack, leftEyeHighlight, rightEyeWhite, rightEyeBlack, rightEyeHighlight]);
+            target.setData('cheeks', [leftCheek, rightCheek]);
             target.setData('nose', nose);
+            target.setData('mouth', mouth);
+            target.setData('paws', [leftPaw, rightPaw]);
         }
 
         // 初期位置（穴の下）
@@ -269,8 +311,14 @@ class MainScene extends Phaser.Scene {
             target.getData('spark').y = target.y - radius - 20;
         }
         if (target.getData('eyes')) {
-            target.getData('eyes').forEach(eye => eye.y = target.y - 10);
-            target.getData('nose').y = target.y + 5;
+            // モグラの全パーツを初期位置に移動
+            const offsetY = 200;
+            target.getData('ears').forEach(ear => ear.y += offsetY);
+            target.getData('eyes').forEach(eye => eye.y += offsetY);
+            target.getData('cheeks').forEach(cheek => cheek.y += offsetY);
+            target.getData('nose').y += offsetY;
+            target.getData('mouth').y += offsetY;
+            target.getData('paws').forEach(paw => paw.y += offsetY);
         }
 
         // 出現アニメーション（Back.out イージング）
@@ -286,10 +334,35 @@ class MainScene extends Phaser.Scene {
                     target.getData('spark').setPosition(target.x, target.y - radius - 20);
                 }
                 if (target.getData('eyes')) {
+                    // 耳
+                    const ears = target.getData('ears');
+                    ears[0].setPosition(target.x - 40, target.y - 35); // leftEar
+                    ears[1].setPosition(target.x - 40, target.y - 35); // leftEarInner
+                    ears[2].setPosition(target.x + 40, target.y - 35); // rightEar
+                    ears[3].setPosition(target.x + 40, target.y - 35); // rightEarInner
+
+                    // 目
                     const eyes = target.getData('eyes');
-                    eyes[0].setPosition(target.x - 15, target.y - 10);
-                    eyes[1].setPosition(target.x + 15, target.y - 10);
-                    target.getData('nose').setPosition(target.x, target.y + 5);
+                    eyes[0].setPosition(target.x - 18, target.y - 12); // leftEyeWhite
+                    eyes[1].setPosition(target.x - 16, target.y - 10); // leftEyeBlack
+                    eyes[2].setPosition(target.x - 19, target.y - 14); // leftEyeHighlight
+                    eyes[3].setPosition(target.x + 18, target.y - 12); // rightEyeWhite
+                    eyes[4].setPosition(target.x + 20, target.y - 10); // rightEyeBlack
+                    eyes[5].setPosition(target.x + 17, target.y - 14); // rightEyeHighlight
+
+                    // ほっぺ
+                    const cheeks = target.getData('cheeks');
+                    cheeks[0].setPosition(target.x - 35, target.y + 5);
+                    cheeks[1].setPosition(target.x + 35, target.y + 5);
+
+                    // 鼻と口
+                    target.getData('nose').setPosition(target.x, target.y + 8);
+                    target.getData('mouth').setPosition(target.x, target.y + 18);
+
+                    // 前足
+                    const paws = target.getData('paws');
+                    paws[0].setPosition(target.x - 30, target.y + 45);
+                    paws[1].setPosition(target.x + 30, target.y + 45);
                 }
             }
         });
@@ -347,13 +420,27 @@ class MainScene extends Phaser.Scene {
             if (eyes) {
                 eyes.forEach(eye => eye.destroy());
             }
-            // ×を描画
-            const cross1 = this.add.line(target.x, target.y - 10, -20, -10, 20, 10, 0x000000, 1);
-            cross1.setLineWidth(4);
-            cross1.setOrigin(0, 0);
-            const cross2 = this.add.line(target.x, target.y - 10, -20, 10, 20, -10, 0x000000, 1);
-            cross2.setLineWidth(4);
-            cross2.setOrigin(0, 0);
+            // ×目を描画（左）
+            const crossL1 = this.add.line(target.x - 18, target.y - 12, -8, -8, 8, 8, 0x000000, 1);
+            crossL1.setLineWidth(3);
+            crossL1.setOrigin(0, 0);
+            const crossL2 = this.add.line(target.x - 18, target.y - 12, -8, 8, 8, -8, 0x000000, 1);
+            crossL2.setLineWidth(3);
+            crossL2.setOrigin(0, 0);
+            // ×目を描画（右）
+            const crossR1 = this.add.line(target.x + 18, target.y - 12, -8, -8, 8, 8, 0x000000, 1);
+            crossR1.setLineWidth(3);
+            crossR1.setOrigin(0, 0);
+            const crossR2 = this.add.line(target.x + 18, target.y - 12, -8, 8, 8, -8, 0x000000, 1);
+            crossR2.setLineWidth(3);
+            crossR2.setOrigin(0, 0);
+
+            // 口を残念な表情に変更
+            const mouth = target.getData('mouth');
+            if (mouth) mouth.destroy();
+            const sadMouth = this.add.arc(target.x, target.y + 25, 10, 180, 360, false);
+            sadMouth.setStrokeStyle(3, 0x000000);
+            sadMouth.setClosePath(false);
 
             // 星を表示
             this.showStars(target.x, target.y - 80);
@@ -406,13 +493,41 @@ class MainScene extends Phaser.Scene {
                     if (fuse && fuse.active) fuse.setPosition(target.x, target.y - 50);
                     if (spark && spark.active) spark.setPosition(target.x, target.y - 70);
                 }
-                if (target.getData('eyes')) {
+                if (target.getData('ears')) {
+                    // 耳
+                    const ears = target.getData('ears');
+                    if (ears[0] && ears[0].active) {
+                        ears[0].setPosition(target.x - 40, target.y - 35);
+                        ears[1].setPosition(target.x - 40, target.y - 35);
+                        ears[2].setPosition(target.x + 40, target.y - 35);
+                        ears[3].setPosition(target.x + 40, target.y - 35);
+                    }
+
+                    // 目
                     const eyes = target.getData('eyes');
-                    const nose = target.getData('nose');
                     eyes.forEach(eye => {
-                        if (eye.active) eye.setPosition(eye.x, target.y - 10);
+                        if (eye && eye.active) eye.y = target.y - 12;
                     });
-                    if (nose && nose.active) nose.setPosition(target.x, target.y + 5);
+
+                    // ほっぺ
+                    const cheeks = target.getData('cheeks');
+                    if (cheeks[0] && cheeks[0].active) {
+                        cheeks[0].setPosition(target.x - 35, target.y + 5);
+                        cheeks[1].setPosition(target.x + 35, target.y + 5);
+                    }
+
+                    // 鼻と口
+                    const nose = target.getData('nose');
+                    if (nose && nose.active) nose.setPosition(target.x, target.y + 8);
+                    const mouth = target.getData('mouth');
+                    if (mouth && mouth.active) mouth.setPosition(target.x, target.y + 18);
+
+                    // 前足
+                    const paws = target.getData('paws');
+                    if (paws[0] && paws[0].active) {
+                        paws[0].setPosition(target.x - 30, target.y + 45);
+                        paws[1].setPosition(target.x + 30, target.y + 45);
+                    }
                 }
             },
             onComplete: () => {
@@ -421,9 +536,15 @@ class MainScene extends Phaser.Scene {
                     target.getData('fuse').destroy();
                     target.getData('spark').destroy();
                 }
-                if (target.getData('eyes')) {
-                    target.getData('eyes').forEach(eye => eye.destroy());
-                    target.getData('nose').destroy();
+                if (target.getData('ears')) {
+                    target.getData('ears').forEach(ear => { if (ear && ear.active) ear.destroy(); });
+                    target.getData('eyes').forEach(eye => { if (eye && eye.active) eye.destroy(); });
+                    target.getData('cheeks').forEach(cheek => { if (cheek && cheek.active) cheek.destroy(); });
+                    const nose = target.getData('nose');
+                    if (nose && nose.active) nose.destroy();
+                    const mouth = target.getData('mouth');
+                    if (mouth && mouth.active) mouth.destroy();
+                    target.getData('paws').forEach(paw => { if (paw && paw.active) paw.destroy(); });
                 }
                 target.destroy();
 
