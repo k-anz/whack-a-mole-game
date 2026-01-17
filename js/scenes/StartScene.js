@@ -109,7 +109,7 @@ class StartScene extends Phaser.Scene {
         button.setInteractive({ useHandCursor: true });
 
         button.on('pointerdown', () => {
-            this.sound.add('buttonClick').play();
+            soundManager.playButtonClick();
             button.setFillStyle(0xCC5528);
         });
 

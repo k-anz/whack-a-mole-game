@@ -34,25 +34,3 @@ const config = {
 
 // ゲーム起動
 const game = new Phaser.Game(config);
-
-// カスタムサウンド登録（プレースホルダ音）
-// 各サウンドはSoundManagerのメソッドを呼び出します
-game.sound.add('buttonClick', {
-    onPlay: () => soundManager.playButtonClick()
-});
-
-game.sound.add('moleAppear', {
-    onPlay: () => soundManager.playMoleAppear()
-});
-
-game.sound.add('moleHit', {
-    onPlay: () => soundManager.playMoleHit()
-});
-
-game.sound.add('bombHit', {
-    onPlay: () => soundManager.playBombHit()
-});
-
-game.sound.add('timeUp', {
-    onPlay: () => soundManager.playTimeUp()
-});

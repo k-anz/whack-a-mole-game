@@ -295,7 +295,7 @@ class MainScene extends Phaser.Scene {
         });
 
         // 出現音
-        this.sound.add('moleAppear').play();
+        soundManager.playMoleAppear();
 
         // インタラクティブ設定
         target.setInteractive({ useHandCursor: true });
@@ -337,7 +337,7 @@ class MainScene extends Phaser.Scene {
             }
 
             // 効果音
-            this.sound.add('moleHit').play();
+            soundManager.playMoleHit();
 
             // スコアポップアップ
             this.showScorePopup(target.x, target.y, `+${GAME_CONFIG.MOLE_SCORE}`, '#00FF00');
@@ -365,7 +365,7 @@ class MainScene extends Phaser.Scene {
             this.combo = 0; // コンボリセット
 
             // 効果音
-            this.sound.add('bombHit').play();
+            soundManager.playBombHit();
 
             // 画面フラッシュ
             this.cameras.main.flash(200, 255, 255, 255);
@@ -539,7 +539,7 @@ class MainScene extends Phaser.Scene {
         });
 
         // 効果音
-        this.sound.add('timeUp').play();
+        soundManager.playTimeUp();
 
         // リザルトシーンへ
         this.time.delayedCall(1000, () => {
