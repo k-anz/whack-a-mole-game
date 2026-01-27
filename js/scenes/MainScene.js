@@ -224,17 +224,19 @@ class MainScene extends Phaser.Scene {
     createTarget(hole, isMole) {
         hole.occupied = true;
 
-        // ターゲット作成（円）
         const radius = 50;
-        const color = isMole ? 0xFF8C00 : 0x000000; // オレンジ or 黒
+        let target;
 
-        const target = this.add.circle(hole.x, hole.y, radius, color);
-        target.setStrokeStyle(4, 0x000000);
-        target.setData('isMole', isMole);
-        target.setData('hole', hole);
+        if (isMole) {
+            // モグラは画像で表示
+            target = this.add.image(hole.x, hole.y, 'mole-normal');
+            target.setDisplaySize(100, 100);
+        } else {
+            // 爆弾は画像で表示
+            target = this.add.image(hole.x, hole.y, 'bomb');
+            target.setDisplaySize(100, 100);
 
-        // 爆弾の場合は導火線を追加（白い線）
-        if (!isMole) {
+            // 導火線を追加（白い線）
             const fuse = this.add.line(hole.x, hole.y, 0, -radius, 0, -radius - 20, 0xFFFFFF, 1);
             fuse.setLineWidth(3);
             fuse.setOrigin(0, 0);
@@ -252,25 +254,16 @@ class MainScene extends Phaser.Scene {
                 yoyo: true,
                 repeat: -1
             });
-        } else {
-            // モグラの目と鼻を追加
-            const leftEye = this.add.circle(hole.x - 15, hole.y - 10, 8, 0x000000);
-            const rightEye = this.add.circle(hole.x + 15, hole.y - 10, 8, 0x000000);
-            const nose = this.add.circle(hole.x, hole.y + 5, 10, 0xFF0000);
-
-            target.setData('eyes', [leftEye, rightEye]);
-            target.setData('nose', nose);
         }
+
+        target.setData('isMole', isMole);
+        target.setData('hole', hole);
 
         // 初期位置（穴の下）
         target.y = hole.y + 200;
         if (target.getData('fuse')) {
             target.getData('fuse').y = target.y - radius;
             target.getData('spark').y = target.y - radius - 20;
-        }
-        if (target.getData('eyes')) {
-            target.getData('eyes').forEach(eye => eye.y = target.y - 10);
-            target.getData('nose').y = target.y + 5;
         }
 
         // 出現アニメーション（Back.out イージング）
@@ -280,16 +273,10 @@ class MainScene extends Phaser.Scene {
             duration: 300,
             ease: 'Back.out',
             onUpdate: () => {
-                // 付属パーツも一緒に移動
+                // 爆弾の付属パーツも一緒に移動
                 if (target.getData('fuse')) {
                     target.getData('fuse').setPosition(target.x, target.y - radius);
                     target.getData('spark').setPosition(target.x, target.y - radius - 20);
-                }
-                if (target.getData('eyes')) {
-                    const eyes = target.getData('eyes');
-                    eyes[0].setPosition(target.x - 15, target.y - 10);
-                    eyes[1].setPosition(target.x + 15, target.y - 10);
-                    target.getData('nose').setPosition(target.x, target.y + 5);
                 }
             }
         });
@@ -342,18 +329,8 @@ class MainScene extends Phaser.Scene {
             // スコアポップアップ
             this.showScorePopup(target.x, target.y, `+${GAME_CONFIG.MOLE_SCORE}`, '#00FF00');
 
-            // 叩かれたアニメーション（目が×になる）
-            const eyes = target.getData('eyes');
-            if (eyes) {
-                eyes.forEach(eye => eye.destroy());
-            }
-            // ×を描画
-            const cross1 = this.add.line(target.x, target.y - 10, -20, -10, 20, 10, 0x000000, 1);
-            cross1.setLineWidth(4);
-            cross1.setOrigin(0, 0);
-            const cross2 = this.add.line(target.x, target.y - 10, -20, 10, 20, -10, 0x000000, 1);
-            cross2.setLineWidth(4);
-            cross2.setOrigin(0, 0);
+            // 叩かれた画像に差し替え
+            target.setTexture('mole-hit');
 
             // 星を表示
             this.showStars(target.x, target.y - 80);
@@ -399,31 +376,19 @@ class MainScene extends Phaser.Scene {
             duration: wasHit ? 200 : 300,
             ease: 'Power2',
             onUpdate: () => {
-                // 付属パーツも一緒に移動
+                // 爆弾の付属パーツも一緒に移動
                 if (target.getData('fuse')) {
                     const fuse = target.getData('fuse');
                     const spark = target.getData('spark');
                     if (fuse && fuse.active) fuse.setPosition(target.x, target.y - 50);
                     if (spark && spark.active) spark.setPosition(target.x, target.y - 70);
                 }
-                if (target.getData('eyes')) {
-                    const eyes = target.getData('eyes');
-                    const nose = target.getData('nose');
-                    eyes.forEach(eye => {
-                        if (eye.active) eye.setPosition(eye.x, target.y - 10);
-                    });
-                    if (nose && nose.active) nose.setPosition(target.x, target.y + 5);
-                }
             },
             onComplete: () => {
-                // クリーンアップ
+                // クリーンアップ（爆弾の付属パーツ）
                 if (target.getData('fuse')) {
                     target.getData('fuse').destroy();
                     target.getData('spark').destroy();
-                }
-                if (target.getData('eyes')) {
-                    target.getData('eyes').forEach(eye => eye.destroy());
-                    target.getData('nose').destroy();
                 }
                 target.destroy();
 
