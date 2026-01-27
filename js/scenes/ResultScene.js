@@ -109,13 +109,17 @@ class ResultScene extends Phaser.Scene {
      */
     createEvaluation(width, height) {
         let message = '';
+        let moleTexture = '';
 
         if (this.finalScore < 500) {
             message = 'もっと頑張れ！';
+            moleTexture = 'mole-happy';
         } else if (this.finalScore < 1500) {
             message = 'なかなかの腕前！';
+            moleTexture = 'mole-surprised';
         } else {
             message = 'モグラマスター！';
+            moleTexture = 'mole-defeated';
         }
 
         const evalText = this.add.text(width / 2, height * 0.6, message, {
@@ -127,35 +131,9 @@ class ResultScene extends Phaser.Scene {
         });
         evalText.setOrigin(0.5);
 
-        // モグラの絵（プレースホルダ）
-        const moleCircle = this.add.circle(width / 2, height * 0.7, 60, 0xFF8C00);
-        moleCircle.setStrokeStyle(4, 0x000000);
-
-        // 表情に応じて目を変える
-        if (this.finalScore < 500) {
-            // 笑顔
-            const leftEye = this.add.circle(width / 2 - 20, height * 0.7 - 15, 8, 0x000000);
-            const rightEye = this.add.circle(width / 2 + 20, height * 0.7 - 15, 8, 0x000000);
-            const smile = this.add.arc(width / 2, height * 0.7, 30, 0, 180, false, 0x000000);
-            smile.setStrokeStyle(4, 0x000000);
-        } else if (this.finalScore < 1500) {
-            // 驚き
-            const leftEye = this.add.circle(width / 2 - 20, height * 0.7 - 15, 12, 0x000000);
-            const rightEye = this.add.circle(width / 2 + 20, height * 0.7 - 15, 12, 0x000000);
-            const mouth = this.add.circle(width / 2, height * 0.7 + 10, 10, 0x000000);
-        } else {
-            // 降参（×目）
-            const cross1 = this.add.line(width / 2, height * 0.7 - 15, -15, -10, 15, 10, 0x000000, 1);
-            cross1.setLineWidth(4);
-            cross1.setOrigin(0, 0);
-            const cross2 = this.add.line(width / 2, height * 0.7 - 15, -15, 10, 15, -10, 0x000000, 1);
-            cross2.setLineWidth(4);
-            cross2.setOrigin(0, 0);
-
-            // 汗
-            const sweat1 = this.add.circle(width / 2 - 50, height * 0.7 - 30, 8, 0x87CEEB);
-            const sweat2 = this.add.circle(width / 2 + 50, height * 0.7 - 30, 8, 0x87CEEB);
-        }
+        // モグラの画像を表示
+        const moleImage = this.add.image(width / 2, height * 0.7, moleTexture);
+        moleImage.setDisplaySize(120, 120);
     }
 
     /**

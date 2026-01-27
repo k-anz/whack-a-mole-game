@@ -9,6 +9,18 @@ class StartScene extends Phaser.Scene {
         super({ key: 'StartScene' });
     }
 
+    /**
+     * アセットのプリロード
+     * モグラの表情画像を読み込む
+     */
+    preload() {
+        this.load.svg('mole-normal', 'assets/images/mole/normal.svg');
+        this.load.svg('mole-hit', 'assets/images/mole/hit.svg');
+        this.load.svg('mole-happy', 'assets/images/mole/happy.svg');
+        this.load.svg('mole-surprised', 'assets/images/mole/surprised.svg');
+        this.load.svg('mole-defeated', 'assets/images/mole/defeated.svg');
+    }
+
     create() {
         const { width, height } = this.cameras.main;
 
