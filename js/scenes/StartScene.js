@@ -11,14 +11,17 @@ class StartScene extends Phaser.Scene {
 
     /**
      * アセットのプリロード
-     * モグラの表情画像を読み込む
+     * モグラの表情画像と爆弾画像を読み込む
      */
     preload() {
+        // モグラ
         this.load.svg('mole-normal', 'assets/images/mole/normal.svg');
         this.load.svg('mole-hit', 'assets/images/mole/hit.svg');
         this.load.svg('mole-happy', 'assets/images/mole/happy.svg');
         this.load.svg('mole-surprised', 'assets/images/mole/surprised.svg');
         this.load.svg('mole-defeated', 'assets/images/mole/defeated.svg');
+        // 爆弾
+        this.load.svg('bomb', 'assets/images/bomb/bomb.svg');
     }
 
     create() {

@@ -232,9 +232,9 @@ class MainScene extends Phaser.Scene {
             target = this.add.image(hole.x, hole.y, 'mole-normal');
             target.setDisplaySize(100, 100);
         } else {
-            // 爆弾は図形で描画
-            target = this.add.circle(hole.x, hole.y, radius, 0x000000);
-            target.setStrokeStyle(4, 0x000000);
+            // 爆弾は画像で表示
+            target = this.add.image(hole.x, hole.y, 'bomb');
+            target.setDisplaySize(100, 100);
 
             // 導火線を追加（白い線）
             const fuse = this.add.line(hole.x, hole.y, 0, -radius, 0, -radius - 20, 0xFFFFFF, 1);
